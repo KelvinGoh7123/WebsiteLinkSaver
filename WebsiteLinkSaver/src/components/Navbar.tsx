@@ -8,7 +8,7 @@ const Navbar = () => {
     { path: "/", label: "Home", icon: Home },
     { path: "/add", label: "Add Link", icon: Plus },
     { path: "/favorites", label: "Favorites", icon: Heart },
-  ];
+  ].filter((item) => item.path !== "/add" || location.pathname !== "/");
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">

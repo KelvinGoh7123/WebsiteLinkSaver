@@ -93,18 +93,25 @@ const Favorites = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center mb-2">
-            <Heart className="w-10 h-10 text-red-500 mr-3 fill-current" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              Favorite Websites
-            </h1>
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <div className="mb-2 flex items-center">
+              <Heart className="mr-3 h-10 w-10 fill-current text-red-500" />
+              <h1 className="text-4xl font-bold text-gray-900">
+                Favorite Websites
+              </h1>
+            </div>
+            <p className="text-gray-600">
+              Quick access to your most important links
+            </p>
           </div>
-          <p className="text-gray-600">
-            Quick access to your most important links
-          </p>
-          {syncing && websites.length > 0 && (
-            <p className="mt-2 text-sm text-primary-600">Updating…</p>
+          {!loading && (
+            <div className="shrink-0 text-right">
+              <p className="text-sm font-medium text-gray-500">
+                {websites.length} favorite{websites.length === 1 ? "" : "s"}
+              </p>
+              {syncing && <p className="text-xs text-gray-400">Updating…</p>}
+            </div>
           )}
         </div>
 
@@ -154,23 +161,17 @@ const Favorites = () => {
 
         {/* Website Grid */}
         {!loading && filteredWebsites.length > 0 && (
-          <>
-            <div className="mb-4 text-gray-600">
-              {filteredWebsites.length} favorite
-              {filteredWebsites.length !== 1 ? "s" : ""}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredWebsites.map((website) => (
-                <LinkCard
-                  key={website.id}
-                  website={website}
-                  onDelete={handleDelete}
-                  onEdit={handleEdit}
-                  onToggleFavorite={handleToggleFavorite}
-                />
-              ))}
-            </div>
-          </>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredWebsites.map((website) => (
+              <LinkCard
+                key={website.id}
+                website={website}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            ))}
+          </div>
         )}
 
         {/* Edit Modal */}

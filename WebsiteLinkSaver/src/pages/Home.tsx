@@ -14,6 +14,7 @@ const Home = () => {
     useWebsites();
   const [filteredWebsites, setFilteredWebsites] = useState<WebsiteLink[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [editingWebsite, setEditingWebsite] = useState<WebsiteLink | null>(
     null
   );
@@ -21,24 +22,24 @@ const Home = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
 
   useEffect(() => {
-    filterWebsites();
-  }, [searchTerm, websites]);
-
-  const filterWebsites = () => {
-    if (!searchTerm.trim()) {
-      setFilteredWebsites(websites);
-      return;
-    }
-
-    const term = searchTerm.toLowerCase();
-    const filtered = websites.filter(
-      (website) =>
+    const term = searchTerm.trim().toLowerCase();
+    const filtered = websites.filter((website) => {
+      const matchesCategory =
+        !selectedCategory || website.category === selectedCategory;
+      const matchesSearch =
+        !term ||
         website.name.toLowerCase().includes(term) ||
         website.description.toLowerCase().includes(term) ||
         website.category.toLowerCase().includes(term) ||
-        website.url.toLowerCase().includes(term)
-    );
+        website.url.toLowerCase().includes(term);
+      return matchesCategory && matchesSearch;
+    });
     setFilteredWebsites(filtered);
+  }, [searchTerm, selectedCategory, websites]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("");
   };
 
   const handleDelete = async (id: string) => {
@@ -97,15 +98,22 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            My Saved Websites
-          </h1>
-          <p className="text-gray-600">
-            Manage and organize your favorite website links
-          </p>
-          {syncing && websites.length > 0 && (
-            <p className="mt-2 text-sm text-primary-600">Updating…</p>
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              My Saved Websites
+            </h1>
+            <p className="text-gray-600">
+              Manage and organize your favorite website links
+            </p>
+          </div>
+          {!loading && (
+            <div className="shrink-0 text-right">
+              <p className="text-sm font-medium text-gray-500">
+                {websites.length} saved
+              </p>
+              {syncing && <p className="text-xs text-gray-400">Updating…</p>}
+            </div>
           )}
         </div>
 
@@ -124,30 +132,33 @@ const Home = () => {
 
         {/* Categories Filter */}
         {categories.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
-            <button
-              onClick={() => setSearchTerm("")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                !searchTerm
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((category) => (
+          <div className="mb-6 overflow-x-auto">
+            <div className="flex w-max min-w-full gap-2 pb-1">
               <button
-                key={category}
-                onClick={() => setSearchTerm(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  searchTerm === category
+                onClick={() => setSelectedCategory("")}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  !selectedCategory
                     ? "bg-primary-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
-                {category}
+                All
               </button>
-            ))}
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  title={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`max-w-[11rem] shrink-0 truncate rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                    selectedCategory === category
+                      ? "bg-primary-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -175,13 +186,17 @@ const Home = () => {
         {!loading && websites.length > 0 && filteredWebsites.length === 0 && (
           <div className="text-center py-16">
             <p className="text-xl text-gray-600">
-              No websites found for "{searchTerm}"
+              No websites found
+              {(selectedCategory || searchTerm) &&
+                ` for "${[selectedCategory, searchTerm]
+                  .filter(Boolean)
+                  .join(" · ")}"`}
             </p>
             <button
-              onClick={() => setSearchTerm("")}
+              onClick={clearFilters}
               className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
             >
-              Clear search
+              Clear filters
             </button>
           </div>
         )}

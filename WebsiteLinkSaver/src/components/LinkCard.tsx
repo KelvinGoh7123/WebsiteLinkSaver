@@ -26,8 +26,8 @@ const LinkCard = ({
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const defaultImage =
-    "https://via.placeholder.com/400x200/0ea5e9/ffffff?text=No+Image";
+  const domain = websiteDomain(website.url);
+  const showImage = Boolean(website.imageUrl) && !imageError;
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
@@ -38,24 +38,32 @@ const LinkCard = ({
   };
 
   return (
-    <div className="card overflow-hidden group">
-      {/* Image Section */}
-      <div className="relative h-48 overflow-hidden bg-gray-200">
-        <img
-          src={imageError ? defaultImage : website.imageUrl || defaultImage}
-          alt={website.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-          loading="lazy"
-          decoding="async"
-          onError={() => setImageError(true)}
-        />
+    <div className="card flex h-full flex-col overflow-hidden">
+      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
+        {showImage && (
+          <img
+            src={website.imageUrl}
+            alt=""
+            className="h-full w-full object-cover object-top"
+            loading="lazy"
+            decoding="async"
+            onError={() => setImageError(true)}
+          />
+        )}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-4 pb-3 pt-12">
+          <h3 className="line-clamp-1 text-lg font-semibold text-white">
+            {website.name}
+          </h3>
+          <p className="line-clamp-1 text-xs text-white/80">{domain}</p>
+        </div>
         <button
           onClick={() => onToggleFavorite(website.id, !website.isFavorite)}
-          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
+          className={`absolute top-3 right-3 rounded-full p-2 shadow-sm transition-all duration-200 ${
             website.isFavorite
               ? "bg-red-500 text-white"
-              : "bg-white/80 text-gray-600 hover:bg-white"
+              : "bg-white text-gray-600 hover:text-red-500"
           }`}
+          title={website.isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           <Heart
             className="w-5 h-5"
@@ -64,26 +72,13 @@ const LinkCard = ({
         </button>
       </div>
 
-      {/* Content Section */}
-      <div className="p-5">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">
-            {website.name}
-          </h3>
-        </div>
-
-        {website.category && (
-          <span className="inline-block px-3 py-1 text-xs font-medium bg-primary-100 text-primary-700 rounded-full mb-3">
-            {website.category}
-          </span>
-        )}
-
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+      <div className="flex flex-1 flex-col p-5">
+        <p className="mb-4 min-h-[2.5rem] line-clamp-2 text-sm text-gray-600">
           {website.description || "No description provided"}
         </p>
 
         {/* Action Buttons */}
-        <div className="flex space-x-2">
+        <div className="mt-auto flex space-x-2">
           <button
             onClick={handleVisit}
             className="flex-1 btn-primary flex items-center justify-center space-x-2"
@@ -123,5 +118,14 @@ const LinkCard = ({
     </div>
   );
 };
+
+function websiteDomain(url: string): string {
+  try {
+    const parsed = new URL(url.startsWith("http") ? url : `https://${url}`);
+    return parsed.hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
 
 export default LinkCard;
