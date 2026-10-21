@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { websiteService } from "../services/websiteService";
-import { imageService } from "../services/imageService";
+import {
+  imageService,
+  MAX_IMAGE_UPLOAD_BYTES,
+} from "../services/imageService";
 import { WebsiteLinkInput } from "../types";
 import SuccessModal from "../components/SuccessModal";
 import { ArrowLeft, Save, Link as LinkIcon, Upload } from "lucide-react";
@@ -29,15 +32,13 @@ const AddLink = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (max 1MB for Base64)
-      const maxSize = 1 * 1024 * 1024; // 1MB
-      if (file.size > maxSize) {
+      if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
         alert(
-          `Image is too large! Please use an image smaller than 1MB.\nCurrent size: ${(
+          `Image is too large! Please use an image smaller than 8MB.\nCurrent size: ${(
             file.size /
             1024 /
             1024
-          ).toFixed(2)}MB\nRecommended: Compress or resize the image.`
+          ).toFixed(2)}MB`
         );
         return;
       }
@@ -66,19 +67,14 @@ const AddLink = () => {
       // Upload image if file is selected
       let imageUrl = formData.imageUrl;
       if (imageFile) {
-        console.log("Converting image to Base64...");
-        imageUrl = await imageService.uploadImage(imageFile, formData.name);
-        console.log("Base64 conversion successful! Length:", imageUrl.length);
+        imageUrl = await imageService.uploadImage(imageFile);
       }
 
-      console.log("Saving to Firestore...");
       // Add website with uploaded image URL
       await websiteService.addWebsite({
         ...formData,
         imageUrl,
       });
-
-      console.log("Website saved successfully!");
 
       // Show success modal with website details
       setSavedWebsite({
@@ -208,7 +204,8 @@ const AddLink = () => {
                       drag and drop
                     </p>
                     <p className="text-xs text-gray-500">
-                      PNG, JPG, GIF (MAX. 5MB)
+                      PNG, JPG, GIF, or WEBP up to 8MB. Photos are resized
+                      automatically.
                     </p>
                   </div>
                   <input

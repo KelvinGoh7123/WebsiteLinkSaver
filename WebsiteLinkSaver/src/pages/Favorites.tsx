@@ -1,19 +1,29 @@
-import { useState, useEffect } from "react";
-import { websiteService } from "../services/websiteService";
+import { useState, useEffect, useMemo } from "react";
 import { WebsiteLink, WebsiteLinkInput } from "../types";
 import LinkCard from "../components/LinkCard";
 import SearchBar from "../components/SearchBar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EditModal from "../components/EditModal";
 import Notification from "../components/Notification";
+import { useWebsites } from "../context/WebsiteContext";
 import { Link } from "react-router-dom";
 import { Heart, Plus } from "lucide-react";
 
 const Favorites = () => {
-  const [websites, setWebsites] = useState<WebsiteLink[]>([]);
+  const {
+    websites: allWebsites,
+    loading,
+    syncing,
+    deleteWebsite,
+    updateWebsite,
+    toggleFavorite,
+  } = useWebsites();
+  const websites = useMemo(
+    () => allWebsites.filter((website) => website.isFavorite),
+    [allWebsites]
+  );
   const [filteredWebsites, setFilteredWebsites] = useState<WebsiteLink[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
   const [editingWebsite, setEditingWebsite] = useState<WebsiteLink | null>(
     null
   );
@@ -21,27 +31,8 @@ const Favorites = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
 
   useEffect(() => {
-    loadFavorites();
-  }, []);
-
-  useEffect(() => {
     filterWebsites();
   }, [searchTerm, websites]);
-
-  const loadFavorites = async () => {
-    try {
-      setLoading(true);
-      const data = await websiteService.getFavoriteWebsites();
-      setWebsites(data);
-    } catch (error) {
-      console.error("Error loading favorites:", error);
-      alert(
-        "Failed to load favorites. Please check your Firebase configuration."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filterWebsites = () => {
     if (!searchTerm.trim()) {
@@ -62,8 +53,7 @@ const Favorites = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await websiteService.deleteWebsite(id);
-      setWebsites(websites.filter((w) => w.id !== id));
+      await deleteWebsite(id);
 
       // Show success notification
       setNotificationMessage("Website deleted successfully!");
@@ -83,9 +73,7 @@ const Favorites = () => {
     data: Partial<WebsiteLinkInput>
   ) => {
     try {
-      await websiteService.updateWebsite(id, data);
-      // Reload favorites to ensure consistency
-      loadFavorites();
+      await updateWebsite(id, data);
     } catch (error) {
       console.error("Error updating website:", error);
       alert("Failed to update website");
@@ -94,11 +82,7 @@ const Favorites = () => {
 
   const handleToggleFavorite = async (id: string, isFavorite: boolean) => {
     try {
-      await websiteService.toggleFavorite(id, isFavorite);
-      // Remove from list if unfavorited
-      if (!isFavorite) {
-        setWebsites(websites.filter((w) => w.id !== id));
-      }
+      await toggleFavorite(id, isFavorite);
     } catch (error) {
       console.error("Error toggling favorite:", error);
       alert("Failed to update favorite status");
@@ -119,6 +103,9 @@ const Favorites = () => {
           <p className="text-gray-600">
             Quick access to your most important links
           </p>
+          {syncing && websites.length > 0 && (
+            <p className="mt-2 text-sm text-primary-600">Updating…</p>
+          )}
         </div>
 
         {/* Search Section */}

@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
-import { websiteService } from "../services/websiteService";
 import { WebsiteLink, WebsiteLinkInput } from "../types";
 import LinkCard from "../components/LinkCard";
 import SearchBar from "../components/SearchBar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EditModal from "../components/EditModal";
 import Notification from "../components/Notification";
+import { useWebsites } from "../context/WebsiteContext";
 import { Link } from "react-router-dom";
 import { Plus, FolderOpen } from "lucide-react";
 
 const Home = () => {
-  const [websites, setWebsites] = useState<WebsiteLink[]>([]);
+  const { websites, loading, syncing, deleteWebsite, updateWebsite, toggleFavorite } =
+    useWebsites();
   const [filteredWebsites, setFilteredWebsites] = useState<WebsiteLink[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
   const [editingWebsite, setEditingWebsite] = useState<WebsiteLink | null>(
     null
   );
@@ -21,27 +21,8 @@ const Home = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
 
   useEffect(() => {
-    loadWebsites();
-  }, []);
-
-  useEffect(() => {
     filterWebsites();
   }, [searchTerm, websites]);
-
-  const loadWebsites = async () => {
-    try {
-      setLoading(true);
-      const data = await websiteService.getAllWebsites();
-      setWebsites(data);
-    } catch (error) {
-      console.error("Error loading websites:", error);
-      alert(
-        "Failed to load websites. Please check your Firebase configuration."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filterWebsites = () => {
     if (!searchTerm.trim()) {
@@ -62,10 +43,8 @@ const Home = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await websiteService.deleteWebsite(id);
-      setWebsites(websites.filter((w) => w.id !== id));
+      await deleteWebsite(id);
 
-      // Show success notification
       setNotificationMessage("Website deleted successfully!");
       setShowNotification(true);
     } catch (error) {
@@ -84,9 +63,7 @@ const Home = () => {
   ) => {
     try {
       //console.log("Updating website with data:", data);
-      await websiteService.updateWebsite(id, data);
-      //console.log("Website updated successfully!");
-      setWebsites(websites.map((w) => (w.id === id ? { ...w, ...data } : w)));
+      await updateWebsite(id, data);
     } catch (error) {
       console.error("Error updating website:", error);
       alert(
@@ -104,10 +81,7 @@ const Home = () => {
 
   const handleToggleFavorite = async (id: string, isFavorite: boolean) => {
     try {
-      await websiteService.toggleFavorite(id, isFavorite);
-      setWebsites(
-        websites.map((w) => (w.id === id ? { ...w, isFavorite } : w))
-      );
+      await toggleFavorite(id, isFavorite);
     } catch (error) {
       //console.error("Error toggling favorite:", error);
       alert("Failed to update favorite status");
@@ -130,6 +104,9 @@ const Home = () => {
           <p className="text-gray-600">
             Manage and organize your favorite website links
           </p>
+          {syncing && websites.length > 0 && (
+            <p className="mt-2 text-sm text-primary-600">Updating…</p>
+          )}
         </div>
 
         {/* Search and Filter Section */}

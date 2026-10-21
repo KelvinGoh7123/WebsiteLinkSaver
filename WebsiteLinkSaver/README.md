@@ -40,7 +40,10 @@ WebsiteLinkSaver/
 │   │   ├── AddLink.tsx     # Add new website form
 │   │   └── Favorites.tsx   # Favorites page
 │   ├── services/           # Business logic
-│   │   └── websiteService.ts  # Firebase CRUD operations
+│   │   ├── websiteService.ts  # Firebase CRUD and live updates
+│   │   └── imageService.ts    # Image resize before save
+│   ├── context/            # Shared app state
+│   │   └── WebsiteContext.tsx # One Firestore listener for all pages
 │   ├── config/             # Configuration
 │   │   └── firebase.ts     # Firebase initialization
 │   ├── types/              # TypeScript types
@@ -147,7 +150,7 @@ service cloud.firestore {
 2. Fill in the form:
    - **Website Name** (required): e.g., "GitHub"
    - **Website URL** (required): e.g., "https://github.com"
-   - **Image URL** (optional): URL to website logo/image
+   - **Image** (optional): upload a photo (resized automatically) or paste an image URL
    - **Category** (optional): e.g., "Development"
    - **Description** (optional): Notes about the website
    - **Add to Favorites**: Check to mark as favorite
@@ -165,6 +168,17 @@ service cloud.firestore {
 - Use the search bar to find websites by name, URL, category, or description
 - Click category tags to filter by specific categories
 - Click "All" to clear filters
+
+## Performance
+
+Saved links used to stay on the loading spinner because each photo was stored as a full Base64 string inside Firestore, and every page waited for a fresh download of the whole collection.
+
+The app now avoids that wait:
+
+- **Smaller images.** Uploaded photos are resized to a thumbnail (max 800×450 JPEG) before they are saved. A normal photo becomes tens of kilobytes instead of close to Firestore’s 1 MB document limit. Pasted image URLs are stored as the URL itself.
+- **Existing photos shrink in the background.** Oversized images already in the database are compressed after they load. The first visit can still take a moment; the following visits use the smaller copy.
+- **Local cache.** Firestore keeps a copy in the browser. Opening the app again shows the saved list immediately, then refreshes it from the server. A short “Updating…” note appears while that refresh is in progress.
+- **One shared list.** Home and Favorites listen to the same data. Opening Favorites does not download the collection a second time. The full-page spinner appears only when there is no list to show yet.
 
 ## Build for Production
 

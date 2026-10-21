@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { X, Upload } from "lucide-react";
 import { WebsiteLink, WebsiteLinkInput } from "../types";
-import { imageService } from "../services/imageService";
+import {
+  imageService,
+  MAX_IMAGE_UPLOAD_BYTES,
+} from "../services/imageService";
 import Notification from "./Notification";
 
 interface EditModalProps {
@@ -49,15 +52,13 @@ const EditModal = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (max 1MB for Base64)
-      const maxSize = 1 * 1024 * 1024; // 1MB
-      if (file.size > maxSize) {
+      if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
         alert(
-          `Image is too large! Please use an image smaller than 1MB.\nCurrent size: ${(
+          `Image is too large! Please use an image smaller than 8MB.\nCurrent size: ${(
             file.size /
             1024 /
             1024
-          ).toFixed(2)}MB\nRecommended: Compress or resize the image.`
+          ).toFixed(2)}MB`
         );
         return;
       }
@@ -83,12 +84,9 @@ const EditModal = ({
       // Upload image if file is selected
       let imageUrl = formData.imageUrl;
       if (imageFile) {
-        console.log("Converting image to Base64...");
-        imageUrl = await imageService.uploadImage(imageFile, formData.name);
-        console.log("Base64 conversion successful! Length:", imageUrl.length);
+        imageUrl = await imageService.uploadImage(imageFile);
       }
 
-      console.log("Saving to Firestore...");
       onSave(website.id, {
         ...formData,
         imageUrl,

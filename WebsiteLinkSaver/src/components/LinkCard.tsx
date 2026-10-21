@@ -45,6 +45,8 @@ const LinkCard = ({
           src={imageError ? defaultImage : website.imageUrl || defaultImage}
           alt={website.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          loading="lazy"
+          decoding="async"
           onError={() => setImageError(true)}
         />
         <button
