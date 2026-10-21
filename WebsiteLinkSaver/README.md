@@ -146,12 +146,12 @@ service cloud.firestore {
 
 ### Adding a Website
 
-1. Click "Add Link" in the navigation
+1. From Home, click **Add New Link**. From any other page, click **Add Link** in the navigation
 2. Fill in the form:
    - **Website Name** (required): e.g., "GitHub"
-   - **Website URL** (required): e.g., "https://github.com"
-   - **Image** (optional): upload a photo (resized automatically) or paste an image URL
-   - **Category** (optional): e.g., "Development"
+   - **Website URL** (required): `github.com` or `https://github.com`. `https://` is added on save if you leave it out
+   - **Image** (optional): drag in a photo or paste an image URL. Choosing one hides the other, and uploaded photos are resized automatically
+   - **Category** (optional): click an existing category or type a new one. A name that matches an existing category, ignoring capital letters, reuses that category
    - **Description** (optional): Notes about the website
    - **Add to Favorites**: Check to mark as favorite
 3. Click "Save Website"

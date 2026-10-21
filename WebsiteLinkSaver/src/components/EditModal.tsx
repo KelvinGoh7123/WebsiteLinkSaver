@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import { WebsiteLink, WebsiteLinkInput } from "../types";
-import {
-  imageService,
-  MAX_IMAGE_UPLOAD_BYTES,
-} from "../services/imageService";
+import { imageService } from "../services/imageService";
 import Notification from "./Notification";
+import CategoryField, { useSavedCategories } from "./CategoryField";
+import ImagePicker from "./ImagePicker";
+import { ensureHttps, normalizeImageUrl, resolveCategory } from "../utils/links";
 
 interface EditModalProps {
   website: WebsiteLink;
@@ -22,6 +22,7 @@ const EditModal = ({
   onSave,
   onSuccess,
 }: EditModalProps) => {
+  const categories = useSavedCategories();
   const [formData, setFormData] = useState<WebsiteLinkInput>({
     name: website.name,
     url: website.url,
@@ -45,32 +46,19 @@ const EditModal = ({
         category: website.category,
       });
       setImageFile(null);
-      setImagePreview("");
+      setImagePreview((current) => {
+        if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+        return "";
+      });
     }
   }, [isOpen, website]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
-        alert(
-          `Image is too large! Please use an image smaller than 8MB.\nCurrent size: ${(
-            file.size /
-            1024 /
-            1024
-          ).toFixed(2)}MB`
-        );
-        return;
-      }
-
-      setImageFile(file);
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleFileChange = (file: File | null) => {
+    if (imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
     }
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : "");
   };
 
   if (!isOpen) return null;
@@ -82,14 +70,17 @@ const EditModal = ({
       setUploading(true);
 
       // Upload image if file is selected
-      let imageUrl = formData.imageUrl;
-      if (imageFile) {
-        imageUrl = await imageService.uploadImage(imageFile);
-      }
+      const imageUrl = imageFile
+        ? await imageService.uploadImage(imageFile)
+        : normalizeImageUrl(formData.imageUrl);
 
       onSave(website.id, {
         ...formData,
+        name: formData.name.trim(),
+        url: ensureHttps(formData.url),
         imageUrl,
+        category: resolveCategory(formData.category, categories),
+        description: formData.description.trim(),
       });
 
       // Show success notification
@@ -156,100 +147,34 @@ const EditModal = ({
                 Website URL *
               </label>
               <input
-                type="url"
+                type="text"
+                inputMode="url"
                 required
                 className="input-field"
-                placeholder="https://example.com"
+                placeholder="example.com"
                 value={formData.url}
                 onChange={(e) =>
                   setFormData({ ...formData, url: e.target.value })
                 }
               />
+              <p className="mt-1 text-sm text-gray-500">
+                https:// is added automatically if you leave it out
+              </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image / Logo
-              </label>
+            <ImagePicker
+              imageUrl={formData.imageUrl}
+              previewUrl={imagePreview}
+              onImageUrlChange={(imageUrl) =>
+                setFormData({ ...formData, imageUrl })
+              }
+              onFileChange={handleFileChange}
+            />
 
-              {/* Current Image Preview */}
-              {!imagePreview && formData.imageUrl && (
-                <div className="mb-3">
-                  <img
-                    src={formData.imageUrl}
-                    alt="Current"
-                    className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                  />
-                </div>
-              )}
-
-              {/* File Upload */}
-              <div className="mb-3">
-                <label className="flex items-center justify-center w-full h-24 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
-                  <div className="flex flex-col items-center justify-center">
-                    <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-500">
-                      <span className="font-semibold">Click to upload</span> new
-                      image
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </label>
-              </div>
-
-              {/* New Image Preview */}
-              {imagePreview && (
-                <div className="mb-3">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                  />
-                </div>
-              )}
-
-              {/* Or Enter URL */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    Or enter URL
-                  </span>
-                </div>
-              </div>
-
-              <input
-                type="url"
-                className="input-field mt-3"
-                placeholder="https://example.com/image.jpg"
-                value={formData.imageUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, imageUrl: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                placeholder="e.g., Social Media, Tools, News"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-              />
-            </div>
+            <CategoryField
+              value={formData.category}
+              onChange={(category) => setFormData({ ...formData, category })}
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -266,10 +191,10 @@ const EditModal = ({
               />
             </div>
 
-            <div className="flex space-x-3 pt-4">
+            <div className="flex items-center gap-4 pt-4">
               <button
                 type="submit"
-                className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={uploading}
               >
                 {uploading ? "Uploading..." : "Save Changes"}
@@ -277,7 +202,7 @@ const EditModal = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 btn-secondary"
+                className="text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50"
                 disabled={uploading}
               >
                 Cancel

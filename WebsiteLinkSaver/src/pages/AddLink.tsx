@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { websiteService } from "../services/websiteService";
-import {
-  imageService,
-  MAX_IMAGE_UPLOAD_BYTES,
-} from "../services/imageService";
+import { imageService } from "../services/imageService";
 import { WebsiteLinkInput } from "../types";
 import SuccessModal from "../components/SuccessModal";
-import { ArrowLeft, Save, Link as LinkIcon, Upload } from "lucide-react";
+import CategoryField, { useSavedCategories } from "../components/CategoryField";
+import ImagePicker from "../components/ImagePicker";
+import { ensureHttps, normalizeImageUrl, resolveCategory } from "../utils/links";
+import { ArrowLeft, Save, Link as LinkIcon } from "lucide-react";
 
 const AddLink = () => {
   const navigate = useNavigate();
+  const categories = useSavedCategories();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -29,28 +30,12 @@ const AddLink = () => {
     isFavorite: false,
   });
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
-        alert(
-          `Image is too large! Please use an image smaller than 8MB.\nCurrent size: ${(
-            file.size /
-            1024 /
-            1024
-          ).toFixed(2)}MB`
-        );
-        return;
-      }
-
-      setImageFile(file);
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleFileChange = (file: File | null) => {
+    if (imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
     }
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : "");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,22 +49,23 @@ const AddLink = () => {
     try {
       setLoading(true);
 
-      // Upload image if file is selected
-      let imageUrl = formData.imageUrl;
-      if (imageFile) {
-        imageUrl = await imageService.uploadImage(imageFile);
-      }
+      const url = ensureHttps(formData.url);
+      const imageUrl = imageFile
+        ? await imageService.uploadImage(imageFile)
+        : normalizeImageUrl(formData.imageUrl);
 
-      // Add website with uploaded image URL
       await websiteService.addWebsite({
         ...formData,
+        name: formData.name.trim(),
+        url,
         imageUrl,
+        category: resolveCategory(formData.category, categories),
+        description: formData.description.trim(),
       });
 
-      // Show success modal with website details
       setSavedWebsite({
-        name: formData.name,
-        url: formData.url,
+        name: formData.name.trim(),
+        url,
         isFavorite: formData.isFavorite || false,
       });
       setShowSuccessModal(true);
@@ -104,8 +90,7 @@ const AddLink = () => {
       category: "",
       isFavorite: false,
     });
-    setImageFile(null);
-    setImagePreview("");
+    handleFileChange(null);
   };
 
   const handleViewWebsite = () => {
@@ -173,10 +158,11 @@ const AddLink = () => {
               <div className="relative">
                 <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type="url"
+                  type="text"
+                  inputMode="url"
                   required
                   className="input-field pl-10"
-                  placeholder="https://example.com"
+                  placeholder="example.com"
                   value={formData.url}
                   onChange={(e) =>
                     setFormData({ ...formData, url: e.target.value })
@@ -184,95 +170,23 @@ const AddLink = () => {
                 />
               </div>
               <p className="mt-1 text-sm text-gray-500">
-                Include the full URL with https://
+                https:// is added automatically if you leave it out
               </p>
             </div>
 
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image / Logo
-              </label>
+            <ImagePicker
+              imageUrl={formData.imageUrl}
+              previewUrl={imagePreview}
+              onImageUrlChange={(imageUrl) =>
+                setFormData({ ...formData, imageUrl })
+              }
+              onFileChange={handleFileChange}
+            />
 
-              {/* File Upload */}
-              <div className="mb-3">
-                <label className="flex items-center justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG, GIF, or WEBP up to 8MB. Photos are resized
-                      automatically.
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </label>
-              </div>
-
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="mb-3">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                  />
-                </div>
-              )}
-
-              {/* Or Enter URL */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    Or enter URL
-                  </span>
-                </div>
-              </div>
-
-              <input
-                type="url"
-                className="input-field mt-3"
-                placeholder="https://example.com/logo.png"
-                value={formData.imageUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, imageUrl: e.target.value })
-                }
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Optional: Upload an image or provide a URL for the website
-                thumbnail
-              </p>
-            </div>
-
-            {/* Category */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <input
-                type="text"
-                className="input-field"
-                placeholder="e.g., Social Media, Development, News, Entertainment"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Organize your links by category
-              </p>
-            </div>
+            <CategoryField
+              value={formData.category}
+              onChange={(category) => setFormData({ ...formData, category })}
+            />
 
             {/* Description */}
             <div>
@@ -310,11 +224,11 @@ const AddLink = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-4 pt-4">
+            <div className="flex items-center gap-4 pt-4">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Save className="w-5 h-5" />
                 <span>{loading ? "Saving..." : "Save Website"}</span>
@@ -322,10 +236,10 @@ const AddLink = () => {
               <button
                 type="button"
                 onClick={handleReset}
-                className="flex-1 btn-secondary"
+                className="text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50"
                 disabled={loading}
               >
-                Reset Form
+                Reset form
               </button>
             </div>
           </form>
