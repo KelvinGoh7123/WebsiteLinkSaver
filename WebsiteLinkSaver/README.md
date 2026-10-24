@@ -167,8 +167,8 @@ Pasting a link that is already saved shows the existing name instead of creating
 
 ### Search & Filter
 
-- Use the search bar to find websites by name, URL, category, or description. Category chips sit on the same row and scroll sideways with the full name visible
-- Search and category work together, and "All" clears only the category
+- Use the search bar to find websites by name, URL, category, or description. Open **All categories** beside search to filter by one category. The menu lists every full name, and **All categories** clears only the category
+- Search and category work together
 - The saved count is a small pill beside the page title. A gray "Updating…" note appears beside it while the list refreshes
 - Choose **2**, **3**, or **4** at the end of the search row to set how many cards appear on a wide screen. A phone always shows one column. The choice is remembered
 

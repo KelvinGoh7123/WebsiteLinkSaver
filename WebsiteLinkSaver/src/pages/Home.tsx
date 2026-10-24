@@ -8,6 +8,7 @@ import Notification from "../components/Notification";
 import { useWebsites } from "../context/WebsiteContext";
 import QuickAdd from "../components/QuickAdd";
 import GridColumnsControl, { useGridColumns } from "../components/GridColumns";
+import CategoryFilter from "../components/CategoryFilter";
 import { Link } from "react-router-dom";
 import { Plus, FolderOpen } from "lucide-react";
 
@@ -134,38 +135,15 @@ const Home = () => {
             />
           </div>
           {categories.length > 0 && (
-            <div className="min-w-0 flex-1">
-              <div className="overflow-x-auto px-1 py-1">
-                <div className="flex w-max gap-2">
-                  <button
-                    onClick={() => setSelectedCategory("")}
-                    className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                      !selectedCategory
-                        ? "bg-primary-600 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  >
-                    All
-                  </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      title={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                        selectedCategory === category
-                          ? "bg-primary-600 text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <CategoryFilter
+              categories={categories}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+            />
           )}
-          <GridColumnsControl columns={columns} onChange={updateColumns} />
+          <div className="lg:ml-auto">
+            <GridColumnsControl columns={columns} onChange={updateColumns} />
+          </div>
         </div>
 
         {/* Loading State */}
