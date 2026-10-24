@@ -160,7 +160,7 @@ Pasting a link that is already saved shows the existing name instead of creating
 
 ### Managing Websites
 
-- **Visit**: Click the "Visit" button to open in a new tab
+- **Visit**: Click the photo, the website name, or the **Visit** button to open in a new tab
 - **Edit**: On a wide screen, move the pointer over a card, then click the edit icon. On a phone, the icon is always visible
 - **Delete**: Same as edit, using the trash icon
 - **Favorite**: Click the heart icon on the image to toggle favorite status
@@ -168,7 +168,7 @@ Pasting a link that is already saved shows the existing name instead of creating
 
 ### Search & Filter
 
-- Use the search bar to find websites by name, URL, category, or description. Open **All categories** beside search to filter by one category. The menu lists every full name, and **All categories** clears only the category
+- Use the search bar to find websites by name, URL, category, or description. Open **All categories** beside search to filter by one category. The menu lists every full name, and **All categories** clears only the category. The pencil beside a name renames that category on every link that uses it, and the filter follows the new name
 - Search and category work together
 - The saved count is a small pill beside the page title. A gray "Updating…" note appears beside it while the list refreshes
 - Choose **2**, **3**, or **4** at the end of the search row to set how many cards appear on a wide screen. A phone always shows one column. The choice is remembered

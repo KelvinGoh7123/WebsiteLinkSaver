@@ -13,8 +13,15 @@ import { Link } from "react-router-dom";
 import { Plus, FolderOpen } from "lucide-react";
 
 const Home = () => {
-  const { websites, loading, syncing, deleteWebsite, updateWebsite, toggleFavorite } =
-    useWebsites();
+  const {
+    websites,
+    loading,
+    syncing,
+    deleteWebsite,
+    updateWebsite,
+    toggleFavorite,
+    renameCategory,
+  } = useWebsites();
   const [filteredWebsites, setFilteredWebsites] = useState<WebsiteLink[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -139,6 +146,7 @@ const Home = () => {
               categories={categories}
               value={selectedCategory}
               onChange={setSelectedCategory}
+              onRename={renameCategory}
             />
           )}
           <div className="lg:ml-auto">

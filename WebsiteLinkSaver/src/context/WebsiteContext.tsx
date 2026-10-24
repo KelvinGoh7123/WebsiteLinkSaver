@@ -9,6 +9,7 @@ import {
 import { websiteService } from "../services/websiteService";
 import { imageService } from "../services/imageService";
 import { WebsiteLink, WebsiteLinkInput } from "../types";
+import { getLastCategory, rememberCategory, resolveCategory } from "../utils/links";
 
 interface WebsiteContextValue {
   websites: WebsiteLink[];
@@ -20,6 +21,7 @@ interface WebsiteContextValue {
     data: Partial<WebsiteLinkInput>
   ) => Promise<void>;
   toggleFavorite: (id: string, isFavorite: boolean) => Promise<void>;
+  renameCategory: (from: string, to: string) => Promise<string>;
 }
 
 const WebsiteContext = createContext<WebsiteContextValue | null>(null);
@@ -107,6 +109,22 @@ export const WebsiteProvider = ({ children }: { children: ReactNode }) => {
   const toggleFavorite = (id: string, isFavorite: boolean) =>
     websiteService.toggleFavorite(id, isFavorite);
 
+  const renameCategory = async (from: string, to: string) => {
+    const current = from.trim();
+    const others = websites
+      .map((website) => website.category.trim())
+      .filter((category) => category && category !== current);
+    const next = resolveCategory(to, others);
+    if (!current || !next || next === current) return current;
+
+    const ids = websites
+      .filter((website) => website.category.trim() === current)
+      .map((website) => website.id);
+    await websiteService.renameCategory(ids, next);
+    if (getLastCategory() === current) rememberCategory(next);
+    return next;
+  };
+
   return (
     <WebsiteContext.Provider
       value={{
@@ -116,6 +134,7 @@ export const WebsiteProvider = ({ children }: { children: ReactNode }) => {
         deleteWebsite,
         updateWebsite,
         toggleFavorite,
+        renameCategory,
       }}
     >
       {children}

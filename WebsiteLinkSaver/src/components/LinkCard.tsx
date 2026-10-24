@@ -42,29 +42,37 @@ const LinkCard = ({
   return (
     <div className="card group flex h-full flex-col overflow-hidden">
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
-        {showIcon && (
-          <div className="flex h-full items-center justify-center">
+        <button
+          type="button"
+          onClick={handleVisit}
+          aria-label={`Open ${website.name}`}
+          className="absolute inset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-600"
+        >
+          {showIcon && (
+            <span className="flex h-full items-center justify-center">
+              <img
+                src={website.imageUrl}
+                alt=""
+                className="h-16 w-16 rounded-2xl bg-white object-contain p-2 shadow-sm"
+                onError={() => setImageError(true)}
+              />
+            </span>
+          )}
+          {showImage && !showIcon && (
             <img
               src={website.imageUrl}
               alt=""
-              className="h-16 w-16 rounded-2xl bg-white object-contain p-2 shadow-sm"
+              className="h-full w-full object-cover object-top"
+              loading="lazy"
+              decoding="async"
               onError={() => setImageError(true)}
             />
-          </div>
-        )}
-        {showImage && !showIcon && (
-          <img
-            src={website.imageUrl}
-            alt=""
-            className="h-full w-full object-cover object-top"
-            loading="lazy"
-            decoding="async"
-            onError={() => setImageError(true)}
-          />
-        )}
+          )}
+        </button>
         <button
+          type="button"
           onClick={() => onToggleFavorite(website.id, !website.isFavorite)}
-          className={`absolute top-3 right-3 rounded-full p-2 shadow-md ring-2 ring-white transition-all duration-200 ${
+          className={`absolute top-3 right-3 z-10 rounded-full p-2 shadow-md ring-2 ring-white transition-all duration-200 ${
             website.isFavorite
               ? "bg-red-500 text-white"
               : "bg-white text-gray-700 hover:text-red-500"
@@ -79,9 +87,13 @@ const LinkCard = ({
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="line-clamp-1 text-lg font-semibold text-gray-900">
+        <button
+          type="button"
+          onClick={handleVisit}
+          className="block w-full truncate text-left text-lg font-semibold text-gray-900 hover:text-primary-700"
+        >
           {website.name}
-        </h3>
+        </button>
         {website.category.trim() && (
           <p
             className="mt-2 w-fit max-w-full truncate rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600"

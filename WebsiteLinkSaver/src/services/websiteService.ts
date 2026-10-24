@@ -4,6 +4,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  writeBatch,
   query,
   onSnapshot,
   Timestamp,
@@ -93,6 +94,27 @@ export const websiteService = {
       });
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      throw error;
+    }
+  },
+
+  async renameCategory(ids: string[], category: string): Promise<void> {
+    const next = category.trim();
+    if (!next || ids.length === 0) return;
+
+    try {
+      for (let index = 0; index < ids.length; index += 400) {
+        const batch = writeBatch(db);
+        for (const id of ids.slice(index, index + 400)) {
+          batch.update(doc(db, COLLECTION_NAME, id), {
+            category: next,
+            updatedAt: Timestamp.now(),
+          });
+        }
+        await batch.commit();
+      }
+    } catch (error) {
+      console.error("Error renaming category:", error);
       throw error;
     }
   },
