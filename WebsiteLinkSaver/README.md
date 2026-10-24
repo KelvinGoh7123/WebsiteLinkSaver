@@ -146,15 +146,17 @@ service cloud.firestore {
 
 ### Adding a Website
 
-1. From Home, click **Add New Link**. From any other page, click **Add Link** in the navigation
-2. Fill in the form:
-   - **Website Name** (required): e.g., "GitHub"
+1. On Home, paste a link into **Paste a link** and click **Save link**. The page title and description are filled in for you, and the site icon is used when you do not add a photo. Pick a category chip, or open **Edit name, note, or image** for the optional fields.
+2. For a photo upload or favorite mark, click **Add New Link** on Home, or **Add Link** from any other page, and use the full form:
+   - **Website Name** (required): filled from the page when the lookup succeeds
    - **Website URL** (required): `github.com` or `https://github.com`. `https://` is added on save if you leave it out
-   - **Image** (optional): drag in a photo or paste an image URL. Choosing one hides the other, and uploaded photos are resized automatically
-   - **Category** (optional): click an existing category or type a new one. A name that matches an existing category, ignoring capital letters, reuses that category
-   - **Description** (optional): Notes about the website
+   - **Image** (optional): drag in a photo or paste an image URL. With no image, the site icon is saved
+   - **Category** (optional): click an existing category or type a new one. The last category you used stays selected. A name that only differs by capital letters reuses the existing category
+   - **Description** (optional): filled from the page when the lookup succeeds
    - **Add to Favorites**: Check to mark as favorite
 3. Click "Save Website"
+
+Pasting a link that is already saved shows the existing name instead of creating a second copy. Titles and descriptions come from [Microlink](https://microlink.io). If that lookup is unavailable, the site name is taken from the domain and the icon is still saved.
 
 ### Managing Websites
 

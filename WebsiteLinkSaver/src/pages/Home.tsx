@@ -6,6 +6,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import EditModal from "../components/EditModal";
 import Notification from "../components/Notification";
 import { useWebsites } from "../context/WebsiteContext";
+import QuickAdd from "../components/QuickAdd";
 import { Link } from "react-router-dom";
 import { Plus, FolderOpen } from "lucide-react";
 
@@ -116,6 +117,18 @@ const Home = () => {
             </div>
           )}
         </div>
+
+        <QuickAdd
+          websites={websites}
+          onSaved={(name) => {
+            setNotificationMessage(`${name} saved`);
+            setShowNotification(true);
+          }}
+          onShowExisting={(website) => {
+            setSelectedCategory("");
+            setSearchTerm(website.name);
+          }}
+        />
 
         {/* Search and Filter Section */}
         <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center">

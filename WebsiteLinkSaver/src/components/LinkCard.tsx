@@ -1,5 +1,6 @@
 import { ExternalLink, Trash2, Edit, Heart } from "lucide-react";
 import { WebsiteLink } from "../types";
+import { isIconImage } from "../utils/links";
 import { useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -28,6 +29,7 @@ const LinkCard = ({
 
   const domain = websiteDomain(website.url);
   const showImage = Boolean(website.imageUrl) && !imageError;
+  const showIcon = showImage && isIconImage(website.imageUrl);
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
@@ -40,7 +42,17 @@ const LinkCard = ({
   return (
     <div className="card flex h-full flex-col overflow-hidden">
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
-        {showImage && (
+        {showIcon && (
+          <div className="flex h-full items-start justify-center pt-8">
+            <img
+              src={website.imageUrl}
+              alt=""
+              className="h-16 w-16 rounded-2xl bg-white object-contain p-2 shadow-sm"
+              onError={() => setImageError(true)}
+            />
+          </div>
+        )}
+        {showImage && !showIcon && (
           <img
             src={website.imageUrl}
             alt=""

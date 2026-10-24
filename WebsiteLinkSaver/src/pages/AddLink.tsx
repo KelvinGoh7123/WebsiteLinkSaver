@@ -1,19 +1,37 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { websiteService } from "../services/websiteService";
 import { imageService } from "../services/imageService";
-import { WebsiteLinkInput } from "../types";
+import { lookupPage } from "../services/metadataService";
+import { WebsiteLink, WebsiteLinkInput } from "../types";
 import SuccessModal from "../components/SuccessModal";
 import CategoryField, { useSavedCategories } from "../components/CategoryField";
 import ImagePicker from "../components/ImagePicker";
-import { ensureHttps, normalizeImageUrl, resolveCategory } from "../utils/links";
+import { useWebsites } from "../context/WebsiteContext";
+import {
+  ensureHttps,
+  faviconUrl,
+  findSavedWebsite,
+  getLastCategory,
+  looksLikeUrl,
+  normalizeImageUrl,
+  rememberCategory,
+  resolveCategory,
+} from "../utils/links";
 import { ArrowLeft, Save, Link as LinkIcon } from "lucide-react";
 
 const AddLink = () => {
   const navigate = useNavigate();
+  const { websites } = useWebsites();
   const categories = useSavedCategories();
   const [loading, setLoading] = useState(false);
+  const [lookingUp, setLookingUp] = useState(false);
+  const [duplicate, setDuplicate] = useState<WebsiteLink | null>(null);
+  const websitesRef = useRef(websites);
+  const imageFileRef = useRef<File | null>(null);
+  websitesRef.current = websites;
   const [imageFile, setImageFile] = useState<File | null>(null);
+  imageFileRef.current = imageFile;
   const [imagePreview, setImagePreview] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [savedWebsite, setSavedWebsite] = useState<{
@@ -26,9 +44,56 @@ const AddLink = () => {
     url: "",
     imageUrl: "",
     description: "",
-    category: "",
+    category: getLastCategory(),
     isFavorite: false,
   });
+
+  useEffect(() => {
+    if (!looksLikeUrl(formData.url)) {
+      setDuplicate(null);
+      setLookingUp(false);
+      return;
+    }
+
+    const normalized = ensureHttps(formData.url);
+    const existing = findSavedWebsite(normalized, websitesRef.current);
+    setDuplicate(existing ?? null);
+    if (existing) {
+      setLookingUp(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      if (findSavedWebsite(normalized, websitesRef.current)) return;
+      setLookingUp(true);
+      const timeout = window.setTimeout(() => controller.abort(), 8000);
+      lookupPage(normalized, controller.signal)
+        .then((metadata) => {
+          window.clearTimeout(timeout);
+          if (!metadata || controller.signal.aborted) return;
+          setFormData((current) => ({
+            ...current,
+            name: current.name.trim() ? current.name : metadata.title,
+            description: current.description.trim()
+              ? current.description
+              : metadata.description,
+            imageUrl:
+              imageFileRef.current || current.imageUrl.trim()
+                ? current.imageUrl
+                : metadata.imageUrl,
+          }));
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLookingUp(false);
+        });
+    }, 500);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [formData.url]);
 
   const handleFileChange = (file: File | null) => {
     if (imagePreview.startsWith("blob:")) {
@@ -46,22 +111,30 @@ const AddLink = () => {
       return;
     }
 
+    const url = ensureHttps(formData.url);
+    const existing = findSavedWebsite(url, websites);
+    if (existing) {
+      setDuplicate(existing);
+      return;
+    }
+
     try {
       setLoading(true);
 
-      const url = ensureHttps(formData.url);
       const imageUrl = imageFile
         ? await imageService.uploadImage(imageFile)
-        : normalizeImageUrl(formData.imageUrl);
+        : normalizeImageUrl(formData.imageUrl) || faviconUrl(url);
+      const category = resolveCategory(formData.category, categories);
 
       await websiteService.addWebsite({
         ...formData,
         name: formData.name.trim(),
         url,
         imageUrl,
-        category: resolveCategory(formData.category, categories),
+        category,
         description: formData.description.trim(),
       });
+      rememberCategory(category);
 
       setSavedWebsite({
         name: formData.name.trim(),
@@ -90,6 +163,7 @@ const AddLink = () => {
       category: "",
       isFavorite: false,
     });
+    setDuplicate(null);
     handleFileChange(null);
   };
 
@@ -172,6 +246,14 @@ const AddLink = () => {
               <p className="mt-1 text-sm text-gray-500">
                 https:// is added automatically if you leave it out
               </p>
+              {lookingUp && (
+                <p className="mt-1 text-sm text-gray-500">Looking up the page…</p>
+              )}
+              {duplicate && (
+                <p className="mt-1 text-sm text-amber-700">
+                  Already saved as {duplicate.name}.
+                </p>
+              )}
             </div>
 
             <ImagePicker
@@ -227,7 +309,7 @@ const AddLink = () => {
             <div className="flex items-center gap-4 pt-4">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || lookingUp || Boolean(duplicate)}
                 className="btn-primary flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Save className="w-5 h-5" />
