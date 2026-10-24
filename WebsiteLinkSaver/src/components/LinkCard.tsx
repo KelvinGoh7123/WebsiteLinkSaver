@@ -40,10 +40,10 @@ const LinkCard = ({
   };
 
   return (
-    <div className="card flex h-full flex-col overflow-hidden">
+    <div className="card group flex h-full flex-col overflow-hidden">
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
         {showIcon && (
-          <div className="flex h-full items-start justify-center pt-8">
+          <div className="flex h-full items-center justify-center">
             <img
               src={website.imageUrl}
               alt=""
@@ -62,18 +62,12 @@ const LinkCard = ({
             onError={() => setImageError(true)}
           />
         )}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent px-4 pb-3 pt-12">
-          <h3 className="line-clamp-1 text-lg font-semibold text-white">
-            {website.name}
-          </h3>
-          <p className="line-clamp-1 text-xs text-white/80">{domain}</p>
-        </div>
         <button
           onClick={() => onToggleFavorite(website.id, !website.isFavorite)}
-          className={`absolute top-3 right-3 rounded-full p-2 shadow-sm transition-all duration-200 ${
+          className={`absolute top-3 right-3 rounded-full p-2 shadow-md ring-2 ring-white transition-all duration-200 ${
             website.isFavorite
               ? "bg-red-500 text-white"
-              : "bg-white text-gray-600 hover:text-red-500"
+              : "bg-white text-gray-700 hover:text-red-500"
           }`}
           title={website.isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
@@ -85,11 +79,14 @@ const LinkCard = ({
       </div>
 
       <div className="flex flex-1 flex-col p-5">
+        <h3 className="line-clamp-1 text-lg font-semibold text-gray-900">
+          {website.name}
+        </h3>
+        <p className="mb-2 line-clamp-1 text-xs text-gray-500">{domain}</p>
         <p className="mb-4 min-h-[2.5rem] line-clamp-2 text-sm text-gray-600">
           {website.description || "No description provided"}
         </p>
 
-        {/* Action Buttons */}
         <div className="mt-auto flex space-x-2">
           <button
             onClick={handleVisit}
@@ -100,14 +97,14 @@ const LinkCard = ({
           </button>
           <button
             onClick={() => onEdit(website)}
-            className="p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            className="rounded-lg bg-gray-200 p-2 text-gray-700 transition-opacity hover:bg-gray-300 max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             title="Edit"
           >
             <Edit className="w-5 h-5" />
           </button>
           <button
             onClick={handleDeleteClick}
-            className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+            className="rounded-lg bg-red-100 p-2 text-red-600 transition-opacity hover:bg-red-200 max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             title="Delete"
           >
             <Trash2 className="w-5 h-5" />

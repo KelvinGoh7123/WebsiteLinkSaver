@@ -130,17 +130,20 @@ const Home = () => {
           }}
         />
 
-        {/* Search and Filter Section */}
-        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center">
+        <div className="mb-6">
           <SearchBar
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             placeholder="Search by name, category, or URL..."
           />
-          <Link to="/add" className="btn-primary whitespace-nowrap">
-            <Plus className="w-5 h-5 inline mr-2" />
-            Add New Link
-          </Link>
+          <div className="mt-2 flex justify-end">
+            <Link
+              to="/add"
+              className="text-sm font-medium text-gray-500 hover:text-primary-700"
+            >
+              More options
+            </Link>
+          </div>
         </div>
 
         {/* Categories Filter */}
@@ -162,7 +165,7 @@ const Home = () => {
                   key={category}
                   title={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`max-w-[11rem] shrink-0 truncate rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                     selectedCategory === category
                       ? "bg-primary-600 text-white"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300"

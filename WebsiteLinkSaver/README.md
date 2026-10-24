@@ -147,7 +147,7 @@ service cloud.firestore {
 ### Adding a Website
 
 1. On Home, paste a link into **Paste a link** and click **Save link**. The page title and description are filled in for you, and the site icon is used when you do not add a photo. Pick a category chip, or open **Edit name, note, or image** for the optional fields.
-2. For a photo upload or favorite mark, click **Add New Link** on Home, or **Add Link** from any other page, and use the full form:
+2. For a photo upload or favorite mark, click **More options** on Home, or **Add Link** from any other page, and use the full form:
    - **Website Name** (required): filled from the page when the lookup succeeds
    - **Website URL** (required): `github.com` or `https://github.com`. `https://` is added on save if you leave it out
    - **Image** (optional): drag in a photo or paste an image URL. With no image, the site icon is saved
@@ -161,15 +161,14 @@ Pasting a link that is already saved shows the existing name instead of creating
 ### Managing Websites
 
 - **Visit**: Click the "Visit" button to open in a new tab
-- **Edit**: Click the edit icon to modify details
-- **Delete**: Click the trash icon to remove
-- **Favorite**: Click the heart icon to toggle favorite status
+- **Edit**: On a wide screen, move the pointer over a card, then click the edit icon. On a phone, the icon is always visible
+- **Delete**: Same as edit, using the trash icon
+- **Favorite**: Click the heart icon on the image to toggle favorite status
 
 ### Search & Filter
 
 - Use the search bar to find websites by name, URL, category, or description
-- Click a category chip to filter by that category. Search and category work together, and "All" clears only the category
-- Long category names are shortened on the chip. Hover a chip to see the full name
+- Click a category chip to filter by that category. The chips stay on one scrolling row and show the full name. Search and category work together, and "All" clears only the category
 - The header shows how many links are saved. A small gray "Updating…" note appears beside that count while the list refreshes
 
 ## Performance
