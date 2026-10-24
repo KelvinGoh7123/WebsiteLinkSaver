@@ -164,6 +164,7 @@ Pasting a link that is already saved shows the existing name instead of creating
 - **Edit**: On a wide screen, move the pointer over a card, then click the edit icon. On a phone, the icon is always visible
 - **Delete**: Same as edit, using the trash icon
 - **Favorite**: Click the heart icon on the image to toggle favorite status
+- **Category**: Each card shows its category as a small gray label under the website name on Home and Favorites
 
 ### Search & Filter
 

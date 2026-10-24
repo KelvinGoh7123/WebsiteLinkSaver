@@ -82,7 +82,21 @@ const LinkCard = ({
         <h3 className="line-clamp-1 text-lg font-semibold text-gray-900">
           {website.name}
         </h3>
-        <p className="mb-2 line-clamp-1 text-xs text-gray-500">{domain}</p>
+        {website.category.trim() && (
+          <p
+            className="mt-2 w-fit max-w-full truncate rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600"
+            title={website.category}
+          >
+            {website.category}
+          </p>
+        )}
+        <p
+          className={`line-clamp-1 text-xs text-gray-500 ${
+            website.category.trim() ? "mb-2 mt-1" : "mb-2"
+          }`}
+        >
+          {domain}
+        </p>
         <p className="mb-4 min-h-[2.5rem] line-clamp-2 text-sm text-gray-600">
           {website.description || "No description provided"}
         </p>
