@@ -49,7 +49,7 @@ const choices: GridColumns[] = [2, 3, 4];
 const GridColumnsControl = ({ columns, onChange }: GridColumnsControlProps) => {
   return (
     <div
-      className="flex shrink-0 rounded-lg bg-gray-200 p-1"
+      className="flex shrink-0 rounded-lg border border-gray-200 bg-white p-1"
       role="group"
       aria-label="Cards per row"
     >
@@ -61,8 +61,8 @@ const GridColumnsControl = ({ columns, onChange }: GridColumnsControlProps) => {
           onClick={() => onChange(choice)}
           className={`h-8 w-8 rounded-md text-sm font-medium transition-colors ${
             columns === choice
-              ? "bg-white text-gray-900 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
+              ? "bg-primary-600 text-white"
+              : "text-gray-700 hover:bg-gray-100"
           }`}
         >
           {choice}

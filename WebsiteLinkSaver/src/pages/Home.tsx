@@ -134,7 +134,7 @@ const Home = () => {
             />
           </div>
           {categories.length > 0 && (
-            <div className="relative min-w-0 flex-1">
+            <div className="min-w-0 flex-1">
               <div className="overflow-x-auto px-1 py-1">
                 <div className="flex w-max gap-2">
                   <button
@@ -163,7 +163,6 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-gray-50 to-transparent" />
             </div>
           )}
           <GridColumnsControl columns={columns} onChange={updateColumns} />
