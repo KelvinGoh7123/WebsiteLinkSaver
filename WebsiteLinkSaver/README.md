@@ -146,12 +146,12 @@ service cloud.firestore {
 
 ### Adding a Website
 
-1. On Home, paste a link into **Paste a link** and click **Save link**. The page title and description are filled in for you, and the site icon is used when you do not add a photo. Pick a category chip, or open **Edit name, note, or image** for the optional fields.
+1. On Home, paste a link into **Paste a link** and click **Save link**. The page title and description are filled in for you, and the site icon is used when you do not add a photo. Pick a category you already use, or a short suggestion such as Design or Tools. You can still type your own. Open **Edit name, note, or image** for the optional fields.
 2. For a photo upload or favorite mark, click **More options** on Home, or **Add Link** from any other page, and use the full form:
    - **Website Name** (required): filled from the page when the lookup succeeds
    - **Website URL** (required): `github.com` or `https://github.com`. `https://` is added on save if you leave it out
    - **Image** (optional): drag in a photo or paste an image URL. With no image, the site icon is saved
-   - **Category** (optional): click an existing category or type a new one. The last category you used stays selected. A name that only differs by capital letters reuses the existing category
+   - **Category** (optional): click a category you already use, click a suggestion (Design, Tools, Learning, Inspiration, Reading, Video, Code, Animation, Reference, Articles, News, Productivity, Research, Writing), or type a new one. A suggestion appears in the Home filter only after a link is saved with that name. The last category you used stays selected. A name that only differs by capital letters reuses the existing category
    - **Description** (optional): filled from the page when the lookup succeeds
    - **Add to Favorites**: Check to mark as favorite
 3. Click "Save Website"
