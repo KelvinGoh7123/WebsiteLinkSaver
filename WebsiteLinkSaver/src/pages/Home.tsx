@@ -99,22 +99,15 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              My Saved Websites
-            </h1>
-            <p className="text-gray-600">
-              Manage and organize your favorite website links
-            </p>
-          </div>
+        <div className="mb-8 flex flex-wrap items-center gap-3">
+          <h1 className="text-4xl font-bold text-gray-900">My Saved Websites</h1>
           {!loading && (
-            <div className="shrink-0 text-right">
-              <p className="text-sm font-medium text-gray-500">
-                {websites.length} saved
-              </p>
-              {syncing && <p className="text-xs text-gray-400">Updating…</p>}
-            </div>
+            <span className="rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-600">
+              {websites.length} saved
+            </span>
+          )}
+          {syncing && websites.length > 0 && (
+            <span className="text-xs text-gray-400">Updating…</span>
           )}
         </div>
 
@@ -130,53 +123,48 @@ const Home = () => {
           }}
         />
 
-        <div className="mb-6">
-          <SearchBar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            placeholder="Search by name, category, or URL..."
-          />
-          <div className="mt-2 flex justify-end">
-            <Link
-              to="/add"
-              className="text-sm font-medium text-gray-500 hover:text-primary-700"
-            >
-              More options
-            </Link>
+        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="w-full lg:max-w-sm lg:shrink-0">
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              placeholder="Search by name, category, or URL..."
+            />
           </div>
-        </div>
-
-        {/* Categories Filter */}
-        {categories.length > 0 && (
-          <div className="mb-6 overflow-x-auto">
-            <div className="flex w-max min-w-full gap-2 pb-1">
-              <button
-                onClick={() => setSelectedCategory("")}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                  !selectedCategory
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                All
-              </button>
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  title={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                    selectedCategory === category
-                      ? "bg-primary-600 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+          {categories.length > 0 && (
+            <div className="relative min-w-0 flex-1">
+              <div className="overflow-x-auto px-1 py-1">
+                <div className="flex w-max gap-2">
+                  <button
+                    onClick={() => setSelectedCategory("")}
+                    className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                      !selectedCategory
+                        ? "bg-primary-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      title={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                        selectedCategory === category
+                          ? "bg-primary-600 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-gray-50 to-transparent" />
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Loading State */}
         {loading && <LoadingSpinner />}

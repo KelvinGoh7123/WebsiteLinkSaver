@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { WebsiteLink } from "../types";
 import { websiteService } from "../services/websiteService";
 import { lookupPage } from "../services/metadataService";
@@ -157,23 +158,31 @@ const QuickAdd = ({ websites, onSaved, onShowExisting }: QuickAddProps) => {
       onSubmit={handleSubmit}
       className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
     >
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <input
           type="text"
           inputMode="url"
           value={url}
           onChange={(event) => handleUrlChange(event.target.value)}
           placeholder="Paste a link, like godly.website"
-          className="input-field"
+          className="input-field min-w-0 flex-1"
           aria-label="Link to save"
         />
-        <button
-          type="submit"
-          className="btn-primary whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={!ready || saving || lookingUp || Boolean(duplicate)}
-        >
-          {saving ? "Saving..." : "Save link"}
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            type="submit"
+            className="btn-primary whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!ready || saving || lookingUp || Boolean(duplicate)}
+          >
+            {saving ? "Saving..." : "Save link"}
+          </button>
+          <Link
+            to="/add"
+            className="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-primary-700"
+          >
+            More options
+          </Link>
+        </div>
       </div>
 
       {lookingUp && (

@@ -167,9 +167,9 @@ Pasting a link that is already saved shows the existing name instead of creating
 
 ### Search & Filter
 
-- Use the search bar to find websites by name, URL, category, or description
-- Click a category chip to filter by that category. The chips stay on one scrolling row and show the full name. Search and category work together, and "All" clears only the category
-- The header shows how many links are saved. A small gray "Updating…" note appears beside that count while the list refreshes
+- Use the search bar to find websites by name, URL, category, or description. Category chips sit on the same row and scroll sideways with the full name visible
+- Search and category work together, and "All" clears only the category
+- The saved count is a small pill beside the page title. A gray "Updating…" note appears beside it while the list refreshes
 
 ## Performance
 
@@ -179,7 +179,7 @@ The app now avoids that wait:
 
 - **Smaller images.** Uploaded photos are resized to a thumbnail (max 800×450 JPEG) before they are saved. A normal photo becomes tens of kilobytes instead of close to Firestore’s 1 MB document limit. Pasted image URLs are stored as the URL itself.
 - **Existing photos shrink in the background.** Oversized images already in the database are compressed after they load. The first visit can still take a moment; the following visits use the smaller copy.
-- **Local cache.** Firestore keeps a copy in the browser. Opening the app again shows the saved list immediately, then refreshes it from the server. A small gray “Updating…” note sits beside the saved count while that refresh is in progress.
+- **Local cache.** Firestore keeps a copy in the browser. Opening the app again shows the saved list immediately, then refreshes it from the server. A small gray “Updating…” note sits beside the saved-count pill while that refresh is in progress.
 - **One shared list.** Home and Favorites listen to the same data. Opening Favorites does not download the collection a second time. The full-page spinner appears only when there is no list to show yet.
 
 ## Build for Production
