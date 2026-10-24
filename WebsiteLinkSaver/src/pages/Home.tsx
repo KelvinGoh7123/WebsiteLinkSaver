@@ -7,6 +7,7 @@ import EditModal from "../components/EditModal";
 import Notification from "../components/Notification";
 import { useWebsites } from "../context/WebsiteContext";
 import QuickAdd from "../components/QuickAdd";
+import GridColumnsControl, { useGridColumns } from "../components/GridColumns";
 import { Link } from "react-router-dom";
 import { Plus, FolderOpen } from "lucide-react";
 
@@ -19,6 +20,7 @@ const Home = () => {
   const [editingWebsite, setEditingWebsite] = useState<WebsiteLink | null>(
     null
   );
+  const { columns, updateColumns, gridClassName } = useGridColumns();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
 
@@ -164,6 +166,7 @@ const Home = () => {
               <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-gray-50 to-transparent" />
             </div>
           )}
+          <GridColumnsControl columns={columns} onChange={updateColumns} />
         </div>
 
         {/* Loading State */}
@@ -207,7 +210,7 @@ const Home = () => {
 
         {/* Website Grid */}
         {!loading && filteredWebsites.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid gap-6 ${gridClassName}`}>
             {filteredWebsites.map((website) => (
               <LinkCard
                 key={website.id}

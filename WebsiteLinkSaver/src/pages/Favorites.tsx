@@ -6,6 +6,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import EditModal from "../components/EditModal";
 import Notification from "../components/Notification";
 import { useWebsites } from "../context/WebsiteContext";
+import GridColumnsControl, { useGridColumns } from "../components/GridColumns";
 import { Link } from "react-router-dom";
 import { Heart, Plus } from "lucide-react";
 
@@ -27,6 +28,7 @@ const Favorites = () => {
   const [editingWebsite, setEditingWebsite] = useState<WebsiteLink | null>(
     null
   );
+  const { columns, updateColumns, gridClassName } = useGridColumns();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
 
@@ -116,12 +118,15 @@ const Favorites = () => {
         </div>
 
         {/* Search Section */}
-        <div className="mb-8">
-          <SearchBar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            placeholder="Search favorites..."
-          />
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="min-w-0 flex-1">
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              placeholder="Search favorites..."
+            />
+          </div>
+          <GridColumnsControl columns={columns} onChange={updateColumns} />
         </div>
 
         {/* Loading State */}
@@ -161,7 +166,7 @@ const Favorites = () => {
 
         {/* Website Grid */}
         {!loading && filteredWebsites.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid gap-6 ${gridClassName}`}>
             {filteredWebsites.map((website) => (
               <LinkCard
                 key={website.id}
