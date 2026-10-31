@@ -92,18 +92,15 @@ const Favorites = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f4f1eb]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-6 py-8">
         {/* Header Section */}
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <div className="mb-2 flex items-center">
-              <Heart className="mr-3 h-10 w-10 fill-current text-red-500" />
-              <h1 className="text-4xl font-bold text-gray-900">
-                Favorite Websites
-              </h1>
-            </div>
-            <p className="text-gray-600">
+            <h1 className="font-display text-5xl tracking-tight text-neutral-950">
+              Favorites
+            </h1>
+            <p className="mt-2 text-sm text-neutral-500">
               Quick access to your most important links
             </p>
           </div>
@@ -157,7 +154,7 @@ const Favorites = () => {
             </p>
             <button
               onClick={() => setSearchTerm("")}
-              className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
+              className="mt-4 font-medium text-neutral-950 underline-offset-4 hover:underline"
             >
               Clear search
             </button>

@@ -178,7 +178,7 @@ const QuickAdd = ({ websites, onSaved, onShowExisting }: QuickAddProps) => {
           </button>
           <Link
             to="/add"
-            className="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-primary-700"
+            className="whitespace-nowrap text-sm font-medium text-neutral-500 hover:text-neutral-950"
           >
             More options
           </Link>
@@ -195,7 +195,7 @@ const QuickAdd = ({ websites, onSaved, onShowExisting }: QuickAddProps) => {
           <button
             type="button"
             onClick={() => onShowExisting(duplicate)}
-            className="font-medium text-primary-700 hover:text-primary-800"
+            className="font-medium text-neutral-950 underline-offset-4 hover:underline"
           >
             Show it
           </button>
@@ -216,7 +216,7 @@ const QuickAdd = ({ websites, onSaved, onShowExisting }: QuickAddProps) => {
           <button
             type="button"
             onClick={() => setExpanded((open) => !open)}
-            className="mt-3 text-sm font-medium text-primary-600 hover:text-primary-700"
+            className="mt-3 text-sm font-medium text-neutral-950 underline-offset-4 hover:underline"
           >
             {expanded ? "Hide details" : "Edit name, note, or image"}
           </button>

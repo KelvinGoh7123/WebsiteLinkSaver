@@ -28,6 +28,9 @@ const LinkCard = ({
   };
 
   const domain = websiteDomain(website.url);
+  const metaTitle = [website.name, website.category.trim(), domain]
+    .filter(Boolean)
+    .join(" · ");
   const showImage = Boolean(website.imageUrl) && !imageError;
   const showIcon = showImage && isIconImage(website.imageUrl);
 
@@ -41,12 +44,12 @@ const LinkCard = ({
 
   return (
     <div className="card group flex h-full flex-col overflow-hidden">
-      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
+      <div className="relative aspect-[16/10] overflow-hidden bg-[#ebe6de]">
         <button
           type="button"
           onClick={handleVisit}
           aria-label={`Open ${website.name}`}
-          className="absolute inset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-600"
+          className="absolute inset-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-neutral-950"
         >
           {showIcon && (
             <span className="flex h-full items-center justify-center">
@@ -62,7 +65,7 @@ const LinkCard = ({
             <img
               src={website.imageUrl}
               alt=""
-              className="h-full w-full object-cover object-top"
+              className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.04]"
               loading="lazy"
               decoding="async"
               onError={() => setImageError(true)}
@@ -72,70 +75,60 @@ const LinkCard = ({
         <button
           type="button"
           onClick={() => onToggleFavorite(website.id, !website.isFavorite)}
-          className={`absolute top-3 right-3 z-10 rounded-full p-2 shadow-md ring-2 ring-white transition-all duration-200 ${
+          className={`absolute top-3 right-3 z-10 rounded-full p-2 shadow-sm ring-2 ring-white transition-colors duration-200 ${
             website.isFavorite
               ? "bg-red-500 text-white"
-              : "bg-white text-gray-700 hover:text-red-500"
+              : "bg-white text-neutral-700 hover:text-red-500"
           }`}
           title={website.isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           <Heart
-            className="w-5 h-5"
+            className="h-4 w-4"
             fill={website.isFavorite ? "currentColor" : "none"}
           />
         </button>
-      </div>
-
-      <div className="flex flex-1 flex-col p-5">
-        <button
-          type="button"
-          onClick={handleVisit}
-          className="block w-full truncate text-left text-lg font-semibold text-gray-900 hover:text-primary-700"
-        >
-          {website.name}
-        </button>
-        {website.category.trim() && (
-          <p
-            className="mt-2 w-fit max-w-full truncate rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600"
-            title={website.category}
-          >
-            {website.category}
-          </p>
-        )}
-        <p
-          className={`line-clamp-1 text-xs text-gray-500 ${
-            website.category.trim() ? "mb-2 mt-1" : "mb-2"
-          }`}
-        >
-          {domain}
-        </p>
-        <p className="mb-4 min-h-[2.5rem] line-clamp-2 text-sm text-gray-600">
-          {website.description || "No description provided"}
-        </p>
-
-        <div className="mt-auto flex space-x-2">
+        <div className="absolute inset-x-3 bottom-3 z-10 flex items-center gap-2">
           <button
+            type="button"
             onClick={handleVisit}
-            className="flex-1 btn-primary flex items-center justify-center space-x-2"
+            className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-medium text-neutral-950 shadow-sm transition-opacity max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
           >
-            <ExternalLink className="w-4 h-4" />
-            <span>Visit</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+            Visit
           </button>
           <button
+            type="button"
             onClick={() => onEdit(website)}
-            className="rounded-lg bg-gray-200 p-2 text-gray-700 transition-opacity hover:bg-gray-300 max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+            className="ml-auto rounded-full bg-white p-2 text-neutral-800 shadow-sm transition-opacity max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             title="Edit"
           >
-            <Edit className="w-5 h-5" />
+            <Edit className="h-4 w-4" />
           </button>
           <button
+            type="button"
             onClick={handleDeleteClick}
-            className="rounded-lg bg-red-100 p-2 text-red-600 transition-opacity hover:bg-red-200 max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+            className="rounded-full bg-white p-2 text-neutral-800 shadow-sm transition-opacity hover:text-red-600 max-sm:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             title="Delete"
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
+      </div>
+
+      <div className="px-3 py-3">
+        <p className="truncate text-sm text-neutral-500" title={metaTitle}>
+          <button
+            type="button"
+            onClick={handleVisit}
+            className="font-medium text-neutral-950"
+          >
+            {website.name}
+          </button>
+          {website.category.trim() && (
+            <span>{` · ${website.category}`}</span>
+          )}
+          <span>{` · ${domain}`}</span>
+        </p>
       </div>
 
       {/* Delete Confirmation Modal */}

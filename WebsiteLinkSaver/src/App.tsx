@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <WebsiteProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-[#f4f1eb]">
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />

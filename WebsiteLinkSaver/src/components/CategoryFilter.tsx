@@ -104,7 +104,7 @@ const CategoryFilter = ({
           })
         }
         className={`flex w-full items-center justify-between gap-2 rounded-lg border bg-white px-4 py-2 text-left text-gray-900 transition-colors hover:bg-gray-50 ${
-          value ? "border-primary-600" : "border-gray-300"
+          value ? "border-neutral-950" : "border-neutral-300"
         }`}
       >
         <span className="truncate">{label}</span>
@@ -142,7 +142,7 @@ const CategoryFilter = ({
                   <button
                     type="submit"
                     disabled={saving}
-                    className="text-sm font-medium text-primary-700 hover:text-primary-800 disabled:opacity-50"
+                    className="text-sm font-medium text-neutral-950 hover:text-neutral-700 disabled:opacity-50"
                   >
                     {saving ? "Saving..." : "Save"}
                   </button>
@@ -189,7 +189,7 @@ interface FilterOptionProps {
 
 const FilterOption = ({ label, selected, onClick, onRename }: FilterOptionProps) => {
   return (
-    <li className={selected ? "bg-primary-50" : "hover:bg-gray-50"}>
+    <li className={selected ? "bg-neutral-100" : "hover:bg-neutral-50"}>
       <div className="flex items-start">
         <button
           type="button"
@@ -197,7 +197,7 @@ const FilterOption = ({ label, selected, onClick, onRename }: FilterOptionProps)
           aria-selected={selected}
           onClick={onClick}
           className={`flex min-w-0 flex-1 items-start gap-3 px-4 py-2 text-left text-sm ${
-            selected ? "font-medium text-primary-700" : "text-gray-800"
+            selected ? "font-medium text-neutral-950" : "text-neutral-800"
           }`}
         >
           <span className="min-w-0 flex-1 whitespace-normal">{label}</span>

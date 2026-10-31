@@ -61,8 +61,8 @@ const GridColumnsControl = ({ columns, onChange }: GridColumnsControlProps) => {
           onClick={() => onChange(choice)}
           className={`h-8 w-8 rounded-md text-sm font-medium transition-colors ${
             columns === choice
-              ? "bg-primary-600 text-white"
-              : "text-gray-700 hover:bg-gray-100"
+              ? "bg-neutral-950 text-white"
+              : "text-neutral-700 hover:bg-black/5"
           }`}
         >
           {choice}

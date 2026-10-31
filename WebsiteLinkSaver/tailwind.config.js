@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['"Palatino Linotype"', "Palatino", "Georgia", "serif"],
+      },
       colors: {
         primary: {
           50: "#f0f9ff",

@@ -106,7 +106,7 @@ const CategoryChip = ({ label, selected, quiet, onClick }: CategoryChipProps) =>
       onMouseDown={(event) => event.preventDefault()}
       onClick={onClick}
       className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-        selected ? "border border-primary-600 bg-primary-600 text-white" : idle
+        selected ? "border border-neutral-950 bg-neutral-950 text-white" : idle
       }`}
     >
       {label}
