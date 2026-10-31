@@ -14,7 +14,6 @@ const Home = () => {
   const {
     websites,
     loading,
-    syncing,
     deleteWebsite,
     updateWebsite,
     toggleFavorite,
@@ -113,19 +112,14 @@ const Home = () => {
               Library
             </h1>
             {!loading && (
-              <p className="mt-2 text-sm text-neutral-500">
-                {websites.length} saved
-                {syncing && websites.length > 0 && (
-                  <span className="ml-2 text-neutral-400">Updating…</span>
-                )}
-              </p>
+              <p className="mt-2 text-sm text-neutral-500">{websites.length} saved</p>
             )}
           </div>
           {!loading && websites.length > 0 && (
             <button
               type="button"
               onClick={() => setAdding((open) => !open)}
-              className="mb-1 text-sm font-medium text-neutral-950 underline-offset-4 hover:underline"
+              className="mb-1 rounded-full border border-neutral-950 px-4 py-1.5 text-sm font-medium text-neutral-950 transition-colors hover:bg-neutral-950 hover:text-white"
             >
               {adding ? "Close" : "Add"}
             </button>

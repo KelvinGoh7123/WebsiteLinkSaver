@@ -14,7 +14,6 @@ const Favorites = () => {
   const {
     websites: allWebsites,
     loading,
-    syncing,
     deleteWebsite,
     updateWebsite,
     toggleFavorite,
@@ -106,10 +105,9 @@ const Favorites = () => {
           </div>
           {!loading && (
             <div className="shrink-0 text-right">
-              <p className="text-sm font-medium text-gray-500">
+              <p className="text-sm font-medium text-neutral-500">
                 {websites.length} favorite{websites.length === 1 ? "" : "s"}
               </p>
-              {syncing && <p className="text-xs text-gray-400">Updating…</p>}
             </div>
           )}
         </div>
