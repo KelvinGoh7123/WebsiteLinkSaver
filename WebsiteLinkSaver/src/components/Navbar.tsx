@@ -16,9 +16,17 @@ const Navbar = () => {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Logo className="h-7 w-7 text-neutral-950" />
-            <span className="text-base font-medium text-neutral-950">Link Saver</span>
+          <Link
+            to="/"
+            aria-label="Link Saver"
+            className="flex items-end text-neutral-950"
+          >
+            <span aria-hidden="true" className="flex items-end gap-px">
+              <Logo className="h-[1.65rem] w-[1.65rem] shrink-0" />
+              <span className="mb-px font-display text-[1.55rem] leading-none tracking-tight">
+                ink Saver
+              </span>
+            </span>
           </Link>
 
           {/* Navigation Links */}

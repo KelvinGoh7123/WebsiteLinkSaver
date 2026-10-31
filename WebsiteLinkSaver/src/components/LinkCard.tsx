@@ -1,6 +1,6 @@
 import { ExternalLink, Trash2, Edit, Heart } from "lucide-react";
 import { WebsiteLink } from "../types";
-import { isIconImage } from "../utils/links";
+import { isIconImage, shortSiteName } from "../utils/links";
 import { useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -28,6 +28,7 @@ const LinkCard = ({
   };
 
   const domain = websiteDomain(website.url);
+  const name = shortSiteName(website.name);
   const metaTitle = [website.name, website.category.trim(), domain]
     .filter(Boolean)
     .join(" · ");
@@ -122,7 +123,7 @@ const LinkCard = ({
             onClick={handleVisit}
             className="font-medium text-neutral-950"
           >
-            {website.name}
+            {name}
           </button>
           {website.category.trim() && (
             <span>{` · ${website.category}`}</span>

@@ -49,6 +49,20 @@ export function isIconImage(url: string): boolean {
   return url.includes("google.com/s2/favicons") || url.includes("icons.duckduckgo.com");
 }
 
+export function shortSiteName(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return trimmed;
+  const parts = trimmed
+    .split(/\s*(?:\||—|–)\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const brief = parts.find((part) => part.length <= 22);
+  const chosen = brief ?? parts.sort((a, b) => a.length - b.length)[0] ?? trimmed;
+  const words = chosen.split(/\s+/);
+  if (chosen.length > 22 && words.length > 2) return words.slice(0, 2).join(" ");
+  return chosen;
+}
+
 export function titleFromUrl(url: string): string {
   try {
     const host = new URL(ensureHttps(url)).hostname.replace(/^www\./, "");
