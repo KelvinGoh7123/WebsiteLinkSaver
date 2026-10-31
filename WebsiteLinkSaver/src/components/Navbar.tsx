@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Plus, Heart, LinkIcon } from "lucide-react";
+import { Home, Plus, Heart } from "lucide-react";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const location = useLocation();
@@ -16,7 +17,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <LinkIcon className="h-5 w-5 text-neutral-950" />
+            <Logo className="h-6 w-6 text-neutral-950" />
             <span className="text-base font-medium text-neutral-950">Link Saver</span>
           </Link>
 
