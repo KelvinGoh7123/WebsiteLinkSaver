@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Logo className="h-6 w-6 text-neutral-950" />
+            <Logo className="h-7 w-7 text-neutral-950" />
             <span className="text-base font-medium text-neutral-950">Link Saver</span>
           </Link>
 
