@@ -121,7 +121,9 @@ const Favorites = () => {
               placeholder="Search favorites..."
             />
           </div>
-          <GridColumnsControl columns={columns} onChange={updateColumns} />
+          <div className="hidden shrink-0 md:block">
+            <GridColumnsControl columns={columns} onChange={updateColumns} />
+          </div>
         </div>
 
         {/* Loading State */}

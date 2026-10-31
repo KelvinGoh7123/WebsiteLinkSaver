@@ -171,7 +171,7 @@ Pasting a link that is already saved shows the existing name instead of creating
 - Use the search bar to find websites by name, URL, category, or description. Open **All categories** beside search to filter by one category. The menu lists every full name, and **All categories** clears only the category. The pencil beside a name renames that category on every link that uses it, and the filter follows the new name
 - Search and category work together
 - The saved count sits under the **Library** title. **Add** opens the paste box, and the same button reads **Close** while that box is open
-- Choose **2**, **3**, or **4** at the end of the search row to set how many cards appear on a wide screen. A phone always shows one column. The choice is remembered
+- Choose **2**, **3**, or **4** at the end of the search row to set how many cards appear on a wide screen. That control is hidden on a phone, which always shows one column. The choice is remembered
 
 ## Performance
 

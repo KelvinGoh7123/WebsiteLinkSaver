@@ -158,7 +158,7 @@ const Home = () => {
               onRename={renameCategory}
             />
           )}
-          <div className="lg:ml-auto">
+          <div className="hidden md:block lg:ml-auto">
             <GridColumnsControl columns={columns} onChange={updateColumns} />
           </div>
         </div>
